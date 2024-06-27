@@ -1,13 +1,12 @@
-
 const https = require('node:https');
 const fs = require('node:fs');
-
 const app = require('./app'); 
-const hostname = '127.0.0.2'// Listen on all network interfaces
+
+const hostname = '127.0.0.1'; // Use '127.0.0.1' for local testing
 
 // Read SSL certificates
 const options = {
-  key: fs.readFileSync('private-key.pem'),
+  key: fs.readFileSync('private-key-no-passphrase.pem'), // Use the key without passphrase
   cert: fs.readFileSync('public-cert.pem')
 };
 

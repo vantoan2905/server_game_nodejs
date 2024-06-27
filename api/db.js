@@ -1,25 +1,24 @@
 // db.js
-const sql = require('mssql');
+const { Pool } = require('pg'); // Correctly import Pool from the pg library
+
 
 const config = {
-    user: 'database',          // Replace with your SQL Server username
-    password: '29052003T',      // Replace with your SQL Server password
-    server: '127.0.0.1',          // Replace with your SQL Server address (e.g., 'localhost' or '127.0.0.1')
-    database: 'game_dataset',      // Replace with your database name
-    options: {
-        encrypt: true,              // Use true if you're on Azure
-        trustServerCertificate: true // Change to true for local dev / self-signed certs
-    }
+    user: 'postgres',          // Replace with your PostgreSQL username
+    password: 'vantoan',      // Replace with your PostgreSQL password
+    host: 'localhost',             // Replace with your PostgreSQL server address (e.g., 'localhost' or '127.0.0.1')
+    database: 'games_database',     // Replace with your database name
+    port: 5432,                    // Replace with your PostgreSQL port if different from 5432
 };
 
-const poolPromise = new sql.ConnectionPool(config)
-    .connect()
-    .then(pool => {
-        console.log('Connected to SQL Server');
-        return pool;
+const pool = new Pool(config);
+
+pool.connect()
+    .then(client => {
+        console.log('Connected to PostgreSQL');
+        client.release(); // release the client back to the pool
     })
-    .catch(err => console.log('Database Connection Failed! Bad Config: ', err));
+    .catch(err => console.error('Database Connection Failed! Bad Config: ', err));
 
 module.exports = {
-    sql, poolPromise
+    pool
 };

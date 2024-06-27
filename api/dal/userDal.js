@@ -1,67 +1,59 @@
-// dal/userDal.js
-const { poolPromise } = require('../db');
+const { pool } = require('../db');
 
+// Get all users
 const getAllUsers = async () => {
     try {
-        const pool = await poolPromise;
-        const result = await pool.request().query('SELECT * FROM users');
-        return result.recordset;
+        const result = await pool.query('SELECT * FROM users');
+        return result.rows; // Access rows property for results
     } catch (err) {
         throw new Error(err.message);
     }
 };
 
+// Get user by username and password
 const getUserById = async (username, password) => {
     try {
-        const pool = await poolPromise;
-        const result = await pool.request()
-            .input('username', username)
-            .input('password', password)
-            .query('SELECT * FROM users WHERE username = @username AND password = @password');
-        return result.recordset[0];
+        const query = 'SELECT * FROM users WHERE username = $1 AND password = $2';
+        const values = [username, password];
+        const result = await pool.query(query, values);
+        return result.rows[0]; // Access rows property for results
     } catch (err) {
         throw new Error(err.message);
     }
 };
 
-const createUser = async (username, email , password) => {
+// Create a new user
+const createUser = async (username, email, password) => {
     try {
-        const user_id = (Math.floor(Math.random() * 10000) + 1).toString();
-        const pool = await poolPromise;
-        const result = await pool.request()
-            .input('user_id', user_id)
-            .input('username', username)
-            .input('email', email)
-            .input('password', password)
-            .query('INSERT INTO users (user_id, username, email, password) VALUES (@user_id, @username, @email, @password)');
-        return result;
+        const userId = (Math.floor(Math.random() * 10000) + 1).toString();
+        const query = 'INSERT INTO users (user_id, username, email, password) VALUES ($1, $2, $3, $4) RETURNING *';
+        const values = [userId, username, email, password];
+        const result = await pool.query(query, values);
+        return result.rows[0]; // Access rows property for results
     } catch (err) {
         throw new Error(err.message);
     }
 };
 
+// Update a user
 const updateUser = async (userId, user) => {
     try {
-        const pool = await poolPromise;
-        const result = await pool.request()
-            .input('userId', userId)
-            .input('username', user.username)
-            .input('email', user.email)
-            .input('password', user.password)
-            .query('UPDATE users SET username = @username, email = @email, password = @password WHERE user_id = @userId');
-        return result;
+        const query = 'UPDATE users SET username = $1, email = $2, password = $3 WHERE user_id = $4 RETURNING *';
+        const values = [user.username, user.email, user.password, userId];
+        const result = await pool.query(query, values);
+        return result.rows[0]; // Access rows property for results
     } catch (err) {
         throw new Error(err.message);
     }
 };
 
+// Delete a user
 const deleteUser = async (userId) => {
     try {
-        const pool = await poolPromise;
-        const result = await pool.request()
-            .input('userId', userId)
-            .query('DELETE FROM users WHERE user_id = @userId');
-        return result;
+        const query = 'DELETE FROM users WHERE user_id = $1 RETURNING *';
+        const values = [userId];
+        const result = await pool.query(query, values);
+        return result.rows[0]; // Access rows property for results
     } catch (err) {
         throw new Error(err.message);
     }
