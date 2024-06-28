@@ -2,7 +2,7 @@ const https = require('node:https');
 const fs = require('node:fs');
 const app = require('./app'); 
 
-const hostname = '127.0.0.1'; // Use '127.0.0.1' for local testing
+const hostname = '127.0.0.2'; // Use '127.0.0.2' for local testing
 
 // Read SSL certificates
 const options = {

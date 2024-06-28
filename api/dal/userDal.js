@@ -1,5 +1,5 @@
 const { pool } = require('../db');
-
+const bcrypt = require('bcrypt');
 // Get all users
 const getAllUsers = async () => {
     try {
@@ -23,16 +23,36 @@ const getUserById = async (username, password) => {
 };
 
 // Create a new user
+
+
+// Function to create a new user with a formatted userId like U000001
 const createUser = async (username, email, password) => {
     try {
-        const userId = (Math.floor(Math.random() * 10000) + 1).toString();
+        // Generate a formatted userId
+        const userId = generateUserId();
+
+        // Hash the password before storing
+        const saltRounds = 10; // You can adjust the number of rounds based on your security requirements
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        // SQL query to insert a new user
         const query = 'INSERT INTO users (user_id, username, email, password) VALUES ($1, $2, $3, $4) RETURNING *';
-        const values = [userId, username, email, password];
+        const values = [userId, username, email, hashedPassword];
+
+        // Execute the query
         const result = await pool.query(query, values);
-        return result.rows[0]; // Access rows property for results
+
+        return result.rows[0]; // Return the newly created user
     } catch (err) {
         throw new Error(err.message);
     }
+};
+
+// Function to generate userId formatted as U000001
+const generateUserId = () => {
+    const randomNumber = Math.floor(Math.random() * 999999) + 1;
+    const userId = 'U' + randomNumber.toString().padStart(6, '0');
+    return userId;
 };
 
 // Update a user

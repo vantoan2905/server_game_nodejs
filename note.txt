@@ -1,0 +1,35 @@
+GET:
+
+Tác dụng: Lấy dữ liệu từ server.
+Sử dụng: Khi bạn muốn truy vấn thông tin từ server mà không làm thay đổi trạng thái của tài nguyên.
+Ví dụ: Lấy thông tin về một người dùng cụ thể từ API.
+POST:
+
+Tác dụng: Gửi dữ liệu mới đến server để tạo mới tài nguyên.
+Sử dụng: Khi bạn muốn thêm một tài nguyên mới vào server.
+Ví dụ: Đăng ký một người dùng mới.
+PUT:
+
+Tác dụng: Cập nhật toàn bộ tài nguyên hiện có trên server.
+Sử dụng: Khi bạn muốn thay thế toàn bộ dữ liệu của một tài nguyên hiện có bằng dữ liệu mới.
+Ví dụ: Cập nhật thông tin của một người dùng (thay thế toàn bộ thông tin).
+PATCH:
+
+Tác dụng: Cập nhật một phần tài nguyên hiện có trên server.
+Sử dụng: Khi bạn muốn thay đổi một phần dữ liệu của một tài nguyên hiện có.
+Ví dụ: Cập nhật địa chỉ email của một người dùng mà không thay đổi các thông tin khác.
+DELETE:
+
+Tác dụng: Xóa tài nguyên khỏi server.
+Sử dụng: Khi bạn muốn xóa một tài nguyên khỏi server.
+Ví dụ: Xóa một người dùng khỏi hệ thống.
+HEAD:
+
+Tác dụng: Tương tự như GET nhưng chỉ lấy phần header của phản hồi, không lấy phần body.
+Sử dụng: Khi bạn muốn kiểm tra metadata của tài nguyên mà không cần lấy dữ liệu thực tế.
+Ví dụ: Kiểm tra loại và kích thước của một tài liệu trước khi tải xuống.
+OPTIONS:
+
+Tác dụng: Lấy thông tin về các method HTTP mà server hỗ trợ cho một URL cụ thể.
+Sử dụng: Khi bạn muốn biết những thao tác nào có thể thực hiện trên tài nguyên.
+Ví dụ: Kiểm tra xem server hỗ trợ những method nào cho một endpoint cụ thể.
