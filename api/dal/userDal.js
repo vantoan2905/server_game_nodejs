@@ -1,39 +1,113 @@
 const { pool } = require('../db');
 const bcrypt = require('bcrypt');
-// Get all users
+
+/**
+ * Retrieves all users from the database.
+ *
+ * @return {Promise<Array>} An array of user objects.
+ * @throws {Error} If there's an error executing the query.
+ */
 const getAllUsers = async () => {
     try {
+        // Execute the SELECT query to retrieve all users
         const result = await pool.query('SELECT * FROM users');
-        return result.rows; // Access rows property for results
+
+        // Return the rows property of the result object, which contains the user records
+        return result.rows; 
     } catch (err) {
+        // If an error occurs, throw a new error with the error message
         throw new Error(err.message);
     }
 };
 
 // Get user by username and password
+/**
+ * Function to retrieve a user from the database based on username and password.
+ * @param {string} username - The username of the user.
+ * @param {string} password - The password of the user.
+ * @returns {Object} - The user object if found, otherwise null.
+ */
 const getUserById = async (username, password) => {
     try {
-        const query = 'SELECT * FROM users WHERE username = $1 AND password = $2';
-        const values = [username, password];
+        // Fetch the user record from the database based on username
+        const query = 'SELECT * FROM users WHERE username = $1';
+        const values = [username];
         const result = await pool.query(query, values);
-        return result.rows[0]; // Access rows property for results
+        
+        if (result.rows.length === 0) {
+            // User not found
+            return null;
+        }
+
+        const user = result.rows[0];
+        const hashedPassword = user.password;
+
+        // Compare the provided password with the hashed password from the database
+        const passwordMatch = await bcrypt.compare(password + username, hashedPassword);
+        if (!passwordMatch) {
+            // Passwords do not match
+            return null;
+        }
+
+        // Passwords match, return the user object
+        return user;
     } catch (err) {
         throw new Error(err.message);
     }
 };
 
+/**
+ * Retrieves a user from the database based on their username and email.
+ * @param {string} name - The username of the user.
+ * @param {string} email - The email of the user.
+ * @returns {Promise<Object|null>} - The user object if found, otherwise null.
+ * @throws {Error} - If there's an error executing the query.
+ */
+const getUserbyEmail = async (name ,email) => {
+    try {
+        // Construct the SQL query to retrieve the user
+        const query = 'SELECT * FROM users WHERE username = $1 AND email = $2';
+        
+        // Log the username and email for debugging purposes
+        console.log(name,email)
+        
+        // Execute the query with the provided username and email
+        const values = [name ,email];
+        const result = await pool.query(query, values);
+        
+        // If no user is found, return null
+        if (result.rows.length === 0) {
+            return null;
+        }
+        
+        // Return the first user in the result set
+        return result.rows[0]; // Access rows property for results
+    } catch (err) {
+        // If an error occurs, throw a new error with the error message
+        throw new Error(err.message);
+    }
+}
+
 // Create a new user
 
 
-// Function to create a new user with a formatted userId like U000001
+/**
+ * Creates a new user with a formatted user ID like U000001.
+ * @param {string} username - The username of the user.
+ * @param {string} email - The email of the user.
+ * @param {string} password - The password of the user.
+ * @returns {Promise<Object>} - The newly created user object.
+ * @throws {Error} - If there's an error executing the query.
+ */
 const createUser = async (username, email, password) => {
     try {
-        // Generate a formatted userId
+        // Generate a formatted user ID
         const userId = generateUserId();
 
         // Hash the password before storing
-        const saltRounds = 10; // You can adjust the number of rounds based on your security requirements
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        // Hash the password + username using bcrypt
+        const hashedPassword = await bcrypt.hash(password + username, 10);
 
         // SQL query to insert a new user
         const query = 'INSERT INTO users (user_id, username, email, password) VALUES ($1, $2, $3, $4) RETURNING *';
@@ -48,34 +122,103 @@ const createUser = async (username, email, password) => {
     }
 };
 
-// Function to generate userId formatted as U000001
+/**
+ * Function to generate a user ID formatted as U000001.
+ * @returns {string} The generated user ID.
+ */
 const generateUserId = () => {
+    // Generate a random number between 1 and 999999
     const randomNumber = Math.floor(Math.random() * 999999) + 1;
+
+    // Pad the random number with leading zeros to make it 6 digits long
     const userId = 'U' + randomNumber.toString().padStart(6, '0');
+
+    // Return the generated user ID
     return userId;
 };
 
-// Update a user
+/**
+ * Update a user in the database.
+ * @param {string} userId - The ID of the user to update.
+ * @param {Object} user - The updated user data.
+ * @param {string} user.username - The updated username.
+ * @param {string} user.email - The updated email.
+ * @param {string} user.password - The updated password.
+ * @returns {Promise<Object>} - The updated user object.
+ * @throws {Error} - If there's an error executing the query.
+ */
 const updateUser = async (userId, user) => {
     try {
+        // Construct the SQL query to update the user
         const query = 'UPDATE users SET username = $1, email = $2, password = $3 WHERE user_id = $4 RETURNING *';
+
+        // Construct the values to be used in the query
         const values = [user.username, user.email, user.password, userId];
+
+        // Execute the query
         const result = await pool.query(query, values);
+
+        // Return the updated user object
         return result.rows[0]; // Access rows property for results
     } catch (err) {
+        // If an error occurs, throw a new error with the error message
         throw new Error(err.message);
     }
 };
 
-// Delete a user
+/**
+ * Delete a user from the database.
+ * @param {string} userId - The ID of the user to delete.
+ * @returns {Promise<Object>} - The deleted user object.
+ * @throws {Error} - If there's an error executing the query.
+ */
 const deleteUser = async (userId) => {
     try {
+        // Construct the SQL query to delete the user
         const query = 'DELETE FROM users WHERE user_id = $1 RETURNING *';
+
+        // Construct the values to be used in the query
         const values = [userId];
+
+        // Execute the query
         const result = await pool.query(query, values);
+
+        // Return the deleted user object
         return result.rows[0]; // Access rows property for results
     } catch (err) {
+        // If an error occurs, throw a new error with the error message
         throw new Error(err.message);
+    }
+};
+/**
+ * Retrieves a user from the database based on their username and email.
+ * @param {string} username - The username of the user.
+ * @param {string} email - The email of the user.
+ * @returns {Promise<Object|null>} - The user object if found, otherwise null.
+ * @throws {Error} - If there's an error executing the query.
+ */
+const forgotPassword = async (username, email) => {
+    try {
+        // Construct the SQL query to retrieve the user
+        const query = 'SELECT * FROM users WHERE username = $1 AND email = $2';
+        
+        // Construct the values to be used in the query
+        const values = [username, email];
+        
+        // Execute the query
+        const result = await pool.query(query, values);
+        
+        // If no user is found, return null
+        if (result.rows.length === 0) {
+            return null;
+        }
+        
+        // Return the first user in the result set
+        return result.rows[0]; // Access rows property for results
+    } catch (err) {
+        // If an error occurs, log the error message and return null
+        console.log(err.message);
+        return null;
     }
 };
 
@@ -84,5 +227,7 @@ module.exports = {
     getUserById,
     createUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    forgotPassword,
+    getUserbyEmail
 };
