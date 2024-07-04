@@ -11,17 +11,15 @@ const sendMail = async (email) => {
     
     // Generate a verification code
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    
     // Send the verification email
     const result = await transporter.sendVerificationEmail( email, verificationCode);
-    
     // Check if the email was sent successfully
-    if (result) {
-        return ('Verification email sent');
-    }            
-    else {
-        return ('User not found');
+    if (!result) {
+        return 'Failed to send verification email';
+    }else{
+        return ['Verification email sent', verificationCode];  
     }
+   
 };
 
 module.exports = { sendMail };

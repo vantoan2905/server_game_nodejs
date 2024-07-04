@@ -137,27 +137,36 @@ const generateUserId = () => {
     return userId;
 };
 
+
 /**
- * Update a user in the database.
- * @param {string} userId - The ID of the user to update.
- * @param {Object} user - The updated user data.
- * @param {string} user.username - The updated username.
- * @param {string} user.email - The updated email.
- * @param {string} user.password - The updated password.
+ * Updates a user in the database.
+ * @param {string} user - The username of the user to update.
+ * @param {string} resetToken - The reset token for the user.
+ * @param {string} newPassword - The new password for the user.
  * @returns {Promise<Object>} - The updated user object.
  * @throws {Error} - If there's an error executing the query.
  */
-const updateUser = async (userId, user) => {
+const updateUser = async (user, newPassword) => {
     try {
+        // Hash the new password and concatenate it with the user
+        const hashedPassword = await bcrypt.hash(newPassword + user, 10);
+
         // Construct the SQL query to update the user
-        const query = 'UPDATE users SET username = $1, email = $2, password = $3 WHERE user_id = $4 RETURNING *';
+        // The query sets the username and password fields to the provided values
+        // and returns the updated row
+        const query = 'UPDATE users SET username = $1, password = $2 WHERE username = $3 RETURNING *';
 
         // Construct the values to be used in the query
-        const values = [user.username, user.email, user.password, userId];
+        // The values are [newUsername, hashedPassword, newUsername]
+        const values = [user, hashedPassword, user];
 
         // Execute the query
         const result = await pool.query(query, values);
-
+        if (result.rows.length === 0) {
+            throw new Error('User not found');
+        }else{
+            console.log("User updated successfully");
+        }
         // Return the updated user object
         return result.rows[0]; // Access rows property for results
     } catch (err) {

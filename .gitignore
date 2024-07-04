@@ -8,7 +8,6 @@ private-key.pem
 public-cert.pem
 
 # Ignore environment variable file
-.env
 
 # Ignore log files
 *.log

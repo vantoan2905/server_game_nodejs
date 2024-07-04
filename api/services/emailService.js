@@ -27,9 +27,11 @@ const sendVerificationEmail = async (email, verificationCode) => {
         // Send the email and log the result
         const info = await transporter.sendMail(mailOptions);
         console.log('Email sent:', info);
+        return info;
     } catch (error) {
         // Log any errors that occur during email sending
         console.error('Error sending email:', error);
+        return null;
     }
 };
 

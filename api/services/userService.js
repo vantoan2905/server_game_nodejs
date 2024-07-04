@@ -77,10 +77,10 @@ const createUser = async (username, email, password) => {
  * @returns {Promise<Object>} The updated user object.
  * @throws {Error} If there was an error updating the user.
  */
-const updateUser = async (userId, user) => {
+const updateUser = async (users, newPassword) => {
     try {
         // Update the user using the user data access layer
-        const result = await userDal.updateUser(userId, user);
+        const result = await userDal.updateUser(users, newPassword);
         return result;
     } catch (err) {
         // If there was an error updating the user, throw an error

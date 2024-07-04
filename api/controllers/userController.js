@@ -1,6 +1,9 @@
 const userService = require('../services/userService');
 const emailController = require('../controllers/emailController');
 
+// Define user controller functions
+// Resetoken 
+let resetToken_;
 /**
  * Retrieves all users from the user service and sends them as a JSON response.
  *
@@ -98,14 +101,19 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         // Get the user ID and updated user details from the request body
-        const userId = req.params.id;
-        const user = req.body;
-
+        
+        const user = req.body.username;
+        const resetToken = req.body.resetToken;
+        const newPassword = req.body.newPassword;
+        console.log(user, resetToken, newPassword);
+        console.log(resetToken_);
         // Update the user using the user service
-        const result = await userService.updateUser(userId, user);
+        if (resetToken == resetToken_){
+            const result = await userService.updateUser(user, newPassword);
+            res.send(result);
+        }
 
         // Send the updated user as a JSON response
-        res.send(result);
     } catch (err) {
         // Send an error response if an error occurs
         res.status(500).send(err.message);
@@ -157,11 +165,14 @@ const forgotPassword = async (req, res) => {
         
         if (user) {
             // Send a verification email if the user exists
-            const emailResult = await emailController.sendMail( email);
-
-            if (emailResult) {
+            const [text,token] = await emailController.sendMail( email);
+        
+            if (text) {
                 // Send a success response if the email is sent successfully
                 res.status(200).send('Verification email sent');
+                console.log("Send email success");
+                resetToken_ = token;
+                
             } else {
                 // Send an error response if the email fails to send
                 res.status(500).send('Failed to send verification email');
@@ -177,6 +188,7 @@ const forgotPassword = async (req, res) => {
         console.log(err);
     }
 };
+
 
 module.exports = {
     getAllUsers,
