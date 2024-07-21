@@ -2,7 +2,7 @@ const https = require('node:https');
 const fs = require('node:fs');
 const app = require('./app'); 
 
-const hostname = '127.0.0.2'; // Use '127.0.0.2' for local testing
+const hostname = '0.0.0.0'; // Use '127.0.0.2' for local testing
 
 // Read SSL certificates
 const options = {
@@ -16,6 +16,6 @@ app.get('/', (req, res) => {
 });
 
 // Create HTTPS server
-https.createServer(options, app).listen(8000, hostname, () => {
-  console.log(`Server is running on https://${hostname}:8000`);
+https.createServer(options, app).listen(3000, hostname, () => {
+  console.log(`Server is running on https://${hostname}:3000`);
 });
