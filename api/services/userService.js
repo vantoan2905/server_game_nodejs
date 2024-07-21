@@ -1,24 +1,49 @@
 // services/userService.js
 const userDal = require('../dal/userDal');
 
+/**
+ * Retrieves all users from the user data access layer.
+ *
+ * @returns {Promise<Array>} An array of user objects.
+ * @throws {Error} If there's an error executing the query.
+ */
 const getAllUsers = async () => {
     try {
+        // Retrieve all users from the user data access layer
         const users = await userDal.getAllUsers();
         return users;
     } catch (err) {
+        // If an error occurs, throw a new error with the error message
         throw new Error(err.message);
     }
 };
 
+
+/**
+ * Retrieves user details from the user service based on the provided username and password.
+ *
+ * @param {string} username - The username of the user.
+ * @param {string} password - The password of the user.
+ * @returns {Promise<Object>} The user object if found, null otherwise.
+ * @throws {Error} If there was an error retrieving the user.
+ */
 const getUserDetails = async (username, password) => {
     try {
+        // Log the username and password for debugging purposes
         console.log(username, password);
+
+        // Retrieve user details from the user data access layer
         const user = await userDal.getUserById(username, password);
+
+        // If user is not found, throw an error
         if (!user) {
             throw new Error('User not found');
         }
+
+        // Return the user object
         return user;
     } catch (err) {
+        // If there was an error retrieving the user, throw an error
         throw new Error(err.message);
     }
 };
@@ -126,6 +151,17 @@ const forgotPassword = async (username, email) => {
     }
 };
 
+const getFriendList = async (userId) => {
+    try {
+        // Retrieve the user with the given username and email
+        const result = await userDal.getFriendList(userId);
+        return result;
+    } catch (err) {
+        // If there was an error retrieving the user, throw an error
+        throw new Error(err.message);
+    }
+};
+
 module.exports = {
     getAllUsers,
     getUserDetails,
@@ -133,6 +169,7 @@ module.exports = {
     updateUser,
     deleteUser,
     forgotPassword,
-    getUserbyEmail
+    getUserbyEmail, 
+    getFriendList
 
 };

@@ -188,6 +188,26 @@ const forgotPassword = async (req, res) => {
         console.log(err);
     }
 };
+/**
+ * Retrieves the friend list of a user.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} Resolves when the response is sent.
+ */
+const getFriendList = async (req, res) => {
+    try {
+        // Retrieve the friend list of the user with the given ID
+        const user = await userService.getFriendList(req.params.id);
+
+        // Send the friend list as a response
+        res.send(user);
+    } catch (err) {
+        // Send an error response if an error occurs
+        res.status(500).send(err.message);
+    }
+}
+
 
 
 module.exports = {
@@ -196,5 +216,6 @@ module.exports = {
     createUser,
     updateUser,
     deleteUser,
-    forgotPassword
+    forgotPassword, 
+    getFriendList
 };

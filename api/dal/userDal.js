@@ -10,7 +10,7 @@ const bcrypt = require('bcrypt');
 const getAllUsers = async () => {
     try {
         // Execute the SELECT query to retrieve all users
-        const result = await pool.query('SELECT * FROM users');
+        const result = await pool.query('SELECT * FROM users_information');
 
         // Return the rows property of the result object, which contains the user records
         return result.rows; 
@@ -30,7 +30,7 @@ const getAllUsers = async () => {
 const getUserById = async (username, password) => {
     try {
         // Fetch the user record from the database based on username
-        const query = 'SELECT * FROM users WHERE username = $1';
+        const query = 'SELECT * FROM users_information WHERE username = $1';
         const values = [username];
         const result = await pool.query(query, values);
         
@@ -66,7 +66,7 @@ const getUserById = async (username, password) => {
 const getUserbyEmail = async (name ,email) => {
     try {
         // Construct the SQL query to retrieve the user
-        const query = 'SELECT * FROM users WHERE username = $1 AND email = $2';
+        const query = 'SELECT * FROM users_information WHERE username = $1 AND email = $2';
         
         // Log the username and email for debugging purposes
         console.log(name,email)
@@ -110,7 +110,7 @@ const createUser = async (username, email, password) => {
         const hashedPassword = await bcrypt.hash(password + username, 10);
 
         // SQL query to insert a new user
-        const query = 'INSERT INTO users (user_id, username, email, password) VALUES ($1, $2, $3, $4) RETURNING *';
+        const query = 'INSERT INTO users_information (user_id, username, email, password) VALUES ($1, $2, $3, $4) RETURNING *';
         const values = [userId, username, email, hashedPassword];
 
         // Execute the query
@@ -154,7 +154,7 @@ const updateUser = async (user, newPassword) => {
         // Construct the SQL query to update the user
         // The query sets the username and password fields to the provided values
         // and returns the updated row
-        const query = 'UPDATE users SET username = $1, password = $2 WHERE username = $3 RETURNING *';
+        const query = 'UPDATE users_information SET username = $1, password = $2 WHERE username = $3 RETURNING *';
 
         // Construct the values to be used in the query
         // The values are [newUsername, hashedPassword, newUsername]
@@ -184,7 +184,7 @@ const updateUser = async (user, newPassword) => {
 const deleteUser = async (userId) => {
     try {
         // Construct the SQL query to delete the user
-        const query = 'DELETE FROM users WHERE user_id = $1 RETURNING *';
+        const query = 'DELETE FROM users_information WHERE user_id = $1 RETURNING *';
 
         // Construct the values to be used in the query
         const values = [userId];
@@ -209,7 +209,7 @@ const deleteUser = async (userId) => {
 const forgotPassword = async (username, email) => {
     try {
         // Construct the SQL query to retrieve the user
-        const query = 'SELECT * FROM users WHERE username = $1 AND email = $2';
+        const query = 'SELECT * FROM users_information WHERE username = $1 AND email = $2';
         
         // Construct the values to be used in the query
         const values = [username, email];
@@ -230,6 +230,30 @@ const forgotPassword = async (username, email) => {
         return null;
     }
 };
+const getFriendList = async (userId) => {
+    try {
+        // Construct the SQL query to retrieve the user
+        const query = 'SELECT friend_list FROM relationship WHERE user_req = $1';
+        
+        // Construct the values to be used in the query
+        const values = [userId];
+        
+        // Execute the query
+        const result = await pool.query(query, values);
+        
+        // If no user is found, return null
+        if (result.rows.length === 0) {
+            return null;
+        }
+        
+        // Return the first user in the result set
+        return result.rows[0].friend_list; // Access rows property for results
+    } catch (err) {
+        // If an error occurs, log the error message and return null
+        console.log(err.message);
+        return null;
+    }
+};
 
 module.exports = {
     getAllUsers,
@@ -238,5 +262,6 @@ module.exports = {
     updateUser,
     deleteUser,
     forgotPassword,
-    getUserbyEmail
+    getUserbyEmail, 
+    getFriendList
 };
