@@ -34,6 +34,7 @@ const createTransporter = async () => {
         tls: {
             rejectUnauthorized: false, // Disable TLS certificate verification
         },
+
     });
 
     return transporter;

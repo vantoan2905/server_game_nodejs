@@ -19,33 +19,33 @@ D:\Nodejs\your_project_name
 ├── server.js              # Server configuration and initialization
 └── other_files_and_directories  # Other relevant files and directories
 ## Getting Started
-## Prerequisites
+1. Prerequisites
 Node.js
 npm
 Docker (optional, for containerization)
-Installation
+2. Installation
 Clone the repository:
 
 bash
 
 git clone https://github.com/yourusername/your_project_name.git
 cd your_project_name
-Install dependencies:
+3. Install dependencies:
 
 bash
 
 npm install
-Set up environment variables:
+4. Set up environment variables:
 
 Create a .env file in the root directory and configure the necessary variables.
 Running the Server
-To start the server, run:
+5. To start the server, run:
 
 bash
 
 node app.js
 Running with Docker
-Build the Docker image:
+6. Build the Docker image:
 
 bash
 

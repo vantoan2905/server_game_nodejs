@@ -7,6 +7,7 @@ const characterController = require('./api/controllers/characterController');
 const effectController = require('./api/controllers/effectController');
 const enemyController = require('./api/controllers/enemyController');
 const rewardController = require('./api/controllers/rewardController');
+const roomController = require('./api/controllers/roomController');
 const app = express();
 
 app.use(bodyParser.json());
@@ -48,5 +49,13 @@ app.post('/rewards/addReward', rewardController.createReward);
 app.post('/rewards/updateReward', rewardController.updateReward);
 app.delete('/rewards/deleteReward', rewardController.deleteReward);
 
+
+// roomController routes
+app.get('/rooms', roomController.getAllRooms);
+app.get('/rooms/getRoom', roomController.getRoom);
+app.post('/rooms/addRoom', roomController.createRoom);
+app.get('/rooms/getUserInRoom', roomController.getUserInRoom);
+app.post('/rooms/updateRoom', roomController.addUserToRoom);
+app.delete('/rooms/deleteRoom', roomController.deleteRoom);
 
 module.exports = app;

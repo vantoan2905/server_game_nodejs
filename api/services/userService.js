@@ -20,20 +20,20 @@ const getAllUsers = async () => {
 
 
 /**
- * Retrieves user details from the user service based on the provided username and password.
+ * Retrieves user details from the user service based on the provided nickname and password.
  *
- * @param {string} username - The username of the user.
+ * @param {string} nickname - The nickname of the user.
  * @param {string} password - The password of the user.
  * @returns {Promise<Object>} The user object if found, null otherwise.
  * @throws {Error} If there was an error retrieving the user.
  */
-const getUserDetails = async (username, password) => {
+const getUserDetails = async (nickname, password) => {
     try {
-        // Log the username and password for debugging purposes
-        console.log(username, password);
+        // Log the nickname and password for debugging purposes
+        console.log(nickname, password);
 
         // Retrieve user details from the user data access layer
-        const user = await userDal.getUserById(username, password);
+        const user = await userDal.getUserById(nickname, password);
 
         // If user is not found, throw an error
         if (!user) {
@@ -50,7 +50,7 @@ const getUserDetails = async (username, password) => {
 /**
  * Retrieves a user by their email.
  *
- * @param {string} name - The username of the user.
+ * @param {string} name - The nickname of the user.
  * @param {string} email - The email of the user.
  * @returns {Promise<Object|null>} The user object if found, null otherwise.
  * @throws {Error} If there was an error retrieving the user.
@@ -75,18 +75,18 @@ const getUserbyEmail = async (name ,email) => {
 }
 
 /**
- * Create a new user with the given username, email, and password.
+ * Create a new user with the given nickname, email, and password.
  *
- * @param {string} username - The username of the user.
+ * @param {string} nickname - The nickname of the user.
  * @param {string} email - The email of the user.
  * @param {string} password - The password of the user.
  * @returns {Promise<Object>} The newly created user object.
  * @throws {Error} If there was an error creating the user.
  */
-const createUser = async (username, email, password) => {
+const createUser = async (nickname, email, password) => {
     try {
         // Create a new user using the user data access layer
-        const result = await userDal.createUser(username, email, password);
+        const result = await userDal.createUser(nickname, email, password);
         return result;
     } catch (err) {
         // If there was an error creating the user, throw an error
@@ -133,17 +133,17 @@ const deleteUser = async (userId) => {
 
 /**
  * Forgot password functionality for a user.
- * Retrieves the user with the given username and email.
+ * Retrieves the user with the given nickname and email.
  *
- * @param {string} username - The username of the user.
+ * @param {string} nickname - The nickname of the user.
  * @param {string} email - The email of the user.
  * @returns {Promise<Object>} The user object if found, null otherwise.
  * @throws {Error} If there was an error retrieving the user.
  */
-const forgotPassword = async (username, email) => {
+const forgotPassword = async (nickname, email) => {
     try {
-        // Retrieve the user with the given username and email
-        const result = await userDal.forgotPassword(username, email);
+        // Retrieve the user with the given nickname and email
+        const result = await userDal.forgotPassword(nickname, email);
         return result;
     } catch (err) {
         // If there was an error retrieving the user, throw an error
@@ -153,7 +153,7 @@ const forgotPassword = async (username, email) => {
 
 const getFriendList = async (userId) => {
     try {
-        // Retrieve the user with the given username and email
+        // Retrieve the user with the given nickname and email
         const result = await userDal.getFriendList(userId);
         return result;
     } catch (err) {

@@ -24,7 +24,7 @@ const getAllUsers = async (req, res) => {
 };
 
 /**
- * Retrieves user details from the user service based on the provided username and password.
+ * Retrieves user details from the user service based on the provided nickname and password.
  *
  * @param {Object} req - The request object.
  * @param {Object} res - The response object.
@@ -32,15 +32,15 @@ const getAllUsers = async (req, res) => {
  */
 const getUser = async (req, res) => {
     try {
-        // Retrieve username and password from request query parameters
-        const username = req.query.username;
+        // Retrieve nickname and password from request query parameters
+        const nickname = req.query.nickname;
         const password = req.query.password;
 
-        // Log the username and password for debugging purposes
-        console.log(username, password);
+        // Log the nickname and password for debugging purposes
+        console.log(nickname, password);
 
         // Retrieve user details from the user service
-        const user = await userService.getUserDetails(username, password);
+        const user = await userService.getUserDetails(nickname, password);
 
         // If user is found, send the user details as a JSON response
         if (user) {
@@ -57,7 +57,7 @@ const getUser = async (req, res) => {
 
 /**
  * Handles the creation of a new user.
- * Retrieves the username, email, and password from the request body
+ * Retrieves the nickname, email, and password from the request body
  * and creates a new user using the user service.
  *
  * @param {Object} req - The request object.
@@ -66,16 +66,16 @@ const getUser = async (req, res) => {
  */
 const createUser = async (req, res) => {
     try {
-        // Get the username, email, and password from the request body
-        const username = req.body.username;
+        // Get the nickname, email, and password from the request body
+        const nickname = req.body.nickname;
         const password = req.body.password;
         const email = req.body.email;
 
         // Log the input for debugging purposes
-        console.log(username, password, email);
+        console.log(nickname, password, email);
 
         // Create a new user using the user service
-        await userService.createUser(username, email, password);
+        await userService.createUser(nickname, email, password);
 
         // Send a success response if the user is created successfully
         res.status(201).send('User created successfully');
@@ -102,7 +102,7 @@ const updateUser = async (req, res) => {
     try {
         // Get the user ID and updated user details from the request body
         
-        const user = req.body.username;
+        const user = req.body.nickname;
         const resetToken = req.body.resetToken;
         const newPassword = req.body.newPassword;
         console.log(user, resetToken, newPassword);
@@ -147,7 +147,7 @@ const deleteUser = async (req, res) => {
 
 /**
  * Handles the forgot password functionality.
- * Retrieves the user with the given username and email
+ * Retrieves the user with the given nickname and email
  * and sends a verification email if the user exists.
  *
  * @param {Object} req - The request object.
@@ -156,12 +156,12 @@ const deleteUser = async (req, res) => {
  */
 const forgotPassword = async (req, res) => {
     try {
-        // Get the username and email from the request query
-        const username = req.body.username;
+        // Get the nickname and email from the request query
+        const nickname = req.body.nickname;
         const email = req.body.email;
-        console.log(username, email);
-        // Retrieve the user with the given username and email
-        const user = await userService.getUserbyEmail(username, email);
+        console.log(nickname, email);
+        // Retrieve the user with the given nickname and email
+        const user = await userService.getUserbyEmail(nickname, email);
         
         if (user) {
             // Send a verification email if the user exists

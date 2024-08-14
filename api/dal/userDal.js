@@ -20,18 +20,18 @@ const getAllUsers = async () => {
     }
 };
 
-// Get user by username and password
+// Get user by nickname and password
 /**
- * Function to retrieve a user from the database based on username and password.
- * @param {string} username - The username of the user.
+ * Function to retrieve a user from the database based on nickname and password.
+ * @param {string} nickname - The nickname of the user.
  * @param {string} password - The password of the user.
  * @returns {Object} - The user object if found, otherwise null.
  */
-const getUserById = async (username, password) => {
+const getUserById = async (nickname, password) => {
     try {
-        // Fetch the user record from the database based on username
-        const query = 'SELECT * FROM users_information WHERE username = $1';
-        const values = [username];
+        // Fetch the user record from the database based on nickname
+        const query = 'SELECT * FROM users_information WHERE nickname = $1';
+        const values = [nickname];
         const result = await pool.query(query, values);
         
         if (result.rows.length === 0) {
@@ -43,7 +43,7 @@ const getUserById = async (username, password) => {
         const hashedPassword = user.password;
 
         // Compare the provided password with the hashed password from the database
-        const passwordMatch = await bcrypt.compare(password + username, hashedPassword);
+        const passwordMatch = await bcrypt.compare(password + nickname, hashedPassword);
         if (!passwordMatch) {
             // Passwords do not match
             return null;
@@ -57,8 +57,8 @@ const getUserById = async (username, password) => {
 };
 
 /**
- * Retrieves a user from the database based on their username and email.
- * @param {string} name - The username of the user.
+ * Retrieves a user from the database based on their nickname and email.
+ * @param {string} name - The nickname of the user.
  * @param {string} email - The email of the user.
  * @returns {Promise<Object|null>} - The user object if found, otherwise null.
  * @throws {Error} - If there's an error executing the query.
@@ -66,12 +66,12 @@ const getUserById = async (username, password) => {
 const getUserbyEmail = async (name ,email) => {
     try {
         // Construct the SQL query to retrieve the user
-        const query = 'SELECT * FROM users_information WHERE username = $1 AND email = $2';
+        const query = 'SELECT * FROM users_information WHERE nickname = $1 AND email = $2';
         
-        // Log the username and email for debugging purposes
+        // Log the nickname and email for debugging purposes
         console.log(name,email)
         
-        // Execute the query with the provided username and email
+        // Execute the query with the provided nickname and email
         const values = [name ,email];
         const result = await pool.query(query, values);
         
@@ -93,25 +93,25 @@ const getUserbyEmail = async (name ,email) => {
 
 /**
  * Creates a new user with a formatted user ID like U000001.
- * @param {string} username - The username of the user.
+ * @param {string} nickname - The nickname of the user.
  * @param {string} email - The email of the user.
  * @param {string} password - The password of the user.
  * @returns {Promise<Object>} - The newly created user object.
  * @throws {Error} - If there's an error executing the query.
  */
-const createUser = async (username, email, password) => {
+const createUser = async (nickname, email, password) => {
     try {
         // Generate a formatted user ID
         const userId = generateUserId();
 
         // Hash the password before storing
 
-        // Hash the password + username using bcrypt
-        const hashedPassword = await bcrypt.hash(password + username, 10);
+        // Hash the password + nickname using bcrypt
+        const hashedPassword = await bcrypt.hash(password + nickname, 10);
 
         // SQL query to insert a new user
-        const query = 'INSERT INTO users_information (user_id, username, email, password) VALUES ($1, $2, $3, $4) RETURNING *';
-        const values = [userId, username, email, hashedPassword];
+        const query = 'INSERT INTO users_information (user_id, nickname, email, password) VALUES ($1, $2, $3, $4) RETURNING *';
+        const values = [userId, nickname, email, hashedPassword];
 
         // Execute the query
         const result = await pool.query(query, values);
@@ -140,7 +140,7 @@ const generateUserId = () => {
 
 /**
  * Updates a user in the database.
- * @param {string} user - The username of the user to update.
+ * @param {string} user - The nickname of the user to update.
  * @param {string} resetToken - The reset token for the user.
  * @param {string} newPassword - The new password for the user.
  * @returns {Promise<Object>} - The updated user object.
@@ -152,12 +152,12 @@ const updateUser = async (user, newPassword) => {
         const hashedPassword = await bcrypt.hash(newPassword + user, 10);
 
         // Construct the SQL query to update the user
-        // The query sets the username and password fields to the provided values
+        // The query sets the nickname and password fields to the provided values
         // and returns the updated row
-        const query = 'UPDATE users_information SET username = $1, password = $2 WHERE username = $3 RETURNING *';
+        const query = 'UPDATE users_information SET nickname = $1, password = $2 WHERE nickname = $3 RETURNING *';
 
         // Construct the values to be used in the query
-        // The values are [newUsername, hashedPassword, newUsername]
+        // The values are [newnickname, hashedPassword, newnickname]
         const values = [user, hashedPassword, user];
 
         // Execute the query
@@ -200,19 +200,19 @@ const deleteUser = async (userId) => {
     }
 };
 /**
- * Retrieves a user from the database based on their username and email.
- * @param {string} username - The username of the user.
+ * Retrieves a user from the database based on their nickname and email.
+ * @param {string} nickname - The nickname of the user.
  * @param {string} email - The email of the user.
  * @returns {Promise<Object|null>} - The user object if found, otherwise null.
  * @throws {Error} - If there's an error executing the query.
  */
-const forgotPassword = async (username, email) => {
+const forgotPassword = async (nickname, email) => {
     try {
         // Construct the SQL query to retrieve the user
-        const query = 'SELECT * FROM users_information WHERE username = $1 AND email = $2';
+        const query = 'SELECT * FROM users_information WHERE nickname = $1 AND email = $2';
         
         // Construct the values to be used in the query
-        const values = [username, email];
+        const values = [nickname, email];
         
         // Execute the query
         const result = await pool.query(query, values);
