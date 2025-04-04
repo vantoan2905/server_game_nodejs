@@ -1,13 +1,11 @@
 # Ignore node_modules directory
 node_modules/
 
-# Ignore private key file
-private-key.pem
+# Ignore key and certificate files
+*.pem
 
-# Ignore public certificate file
-public-cert.pem
-
-# Ignore environment variable file
+# Ignore environment variable files
+*.env
 
 # Ignore log files
 *.log
